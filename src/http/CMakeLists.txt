@@ -1,6 +1,6 @@
 set( __LIBRARY_OUTPUT_PATH__ cxxtools/lib )
 
-set( __LIBRARY_NAME__ cxxtools-bin )
+set( __LIBRARY_NAME__ cxxtools-http )
 set( __LIBRARY_STATIC__ "${__LIBRARY_NAME__}_static" )
 set( __LIBRARY_SHARED__ "${__LIBRARY_NAME__}_shared" )
 set( __LIBRARY_LINK_LIBS__ "-lssl -lrt -lnsl -lpthread" )
@@ -12,18 +12,23 @@ set( CMAKE_CXX_STANDARD_REQUIRED ON )
 set( CMAKE_CXX_EXTENSION ON )
 
 set( __LIBRARY_SOURCES__
-serializer.cpp
+service.cpp
 parser.cpp
-rpcserverimpl.cpp
-deserializer.cpp
 worker.cpp
-rpcclientimpl.cpp
-scanner.cpp
-formatter.cpp
+notfoundservice.cpp
+request.cpp
+notauthenticatedservice.cpp
+notauthenticatedresponder.cpp
+mapper.cpp
+messageheader.cpp
 responder.cpp
-rpcserver.cpp
+client.cpp
+chunkedreader.cpp
+serverimpl.cpp
+clientimpl.cpp
+notfoundresponder.cpp
 socket.cpp
-rpcclient.cpp
+server.cpp
 )
 
 #message( STATUS "CMAKE_CURRENT_SOURCE_DIR => ${CMAKE_CURRENT_SOURCE_DIR}" )

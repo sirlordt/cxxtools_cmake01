@@ -1,6 +1,6 @@
 set( __LIBRARY_OUTPUT_PATH__ cxxtools/lib )
 
-set( __LIBRARY_NAME__ cxxtools-bin )
+set( __LIBRARY_NAME__ cxxtools-json )
 set( __LIBRARY_STATIC__ "${__LIBRARY_NAME__}_static" )
 set( __LIBRARY_SHARED__ "${__LIBRARY_NAME__}_shared" )
 set( __LIBRARY_LINK_LIBS__ "-lssl -lrt -lnsl -lpthread" )
@@ -12,16 +12,16 @@ set( CMAKE_CXX_STANDARD_REQUIRED ON )
 set( CMAKE_CXX_EXTENSION ON )
 
 set( __LIBRARY_SOURCES__
-serializer.cpp
-parser.cpp
 rpcserverimpl.cpp
-deserializer.cpp
 worker.cpp
 rpcclientimpl.cpp
+httpresponder.cpp
 scanner.cpp
-formatter.cpp
+httpclient.cpp
 responder.cpp
 rpcserver.cpp
+httpclientimpl.cpp
+httpservice.cpp
 socket.cpp
 rpcclient.cpp
 )
