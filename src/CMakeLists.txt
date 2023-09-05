@@ -1,4 +1,6 @@
 set( __LIBRARY_OUTPUT_PATH__ cxxtools/lib )
+set( __LIBRARY_INSTALL_LIB_PATH__ cxxtools/lib )
+set( __LIBRARY_INSTALL_INCLUDE_PATH__ cxxtools/include )
 
 set( __LIBRARY_NAME__ cxxtools )
 set( __LIBRARY_STATIC__ "${__LIBRARY_NAME__}_static" )
@@ -40,9 +42,14 @@ iconvwrap.cpp iconvstream.cpp sslcertificateimpl.cpp sslctx.cpp sslctximpl.cpp m
 #message( STATUS "CMAKE_CURRENT_SOURCE_DIR => ${CMAKE_CURRENT_SOURCE_DIR}" )
 #message( STATUS "CMAKE_SOURCE_DIR => ${CMAKE_SOURCE_DIR}" )
 
-set( __LIBRARY_HEADERS__ ${CMAKE_CURRENT_SOURCE_DIR}/../include
-                         ${CMAKE_CURRENT_SOURCE_DIR}/.
+set( __LIBRARY_HEADERS_FOLDERS__ ${CMAKE_CURRENT_SOURCE_DIR}/../include
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/.
    )
+
+#file( GLOB_RECURSE __LIBRARY_HEADERS_FILES__ ${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h
+#                                             ${CMAKE_CURRENT_SOURCE_DIR}/../include/*.tpp )
+
+#message( STATUS "__LIBRARY_HEADERS_FILES__ => ${__LIBRARY_HEADERS_FILES__}" )
 
 #message( STATUS "CMAKE_CURRENT_BINARY_DIR => ${CMAKE_CURRENT_BINARY_DIR}" )
 #message( STATUS "CMAKE_BINARY_DIR => ${CMAKE_BINARY_DIR}" )
@@ -51,6 +58,7 @@ add_library( ${__LIBRARY_STATIC__} STATIC ${__LIBRARY_SOURCES__} )
 
 set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
 set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/ )
+#set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES PUBLIC_HEADER "${__LIBRARY_HEADERS_FILES__}" )
 
 #target_compile_definitions( cxxtools PRIVATE BUILT_SHARED=ON )
 
@@ -60,18 +68,19 @@ target_compile_options( ${__LIBRARY_STATIC__} PRIVATE
                         $<$<CXX_COMPILER_ID:MSVC>:
                         /W4 /pedantic>)
 
-target_include_directories( ${__LIBRARY_STATIC__} PUBLIC ${__LIBRARY_HEADERS__} )
+target_include_directories( ${__LIBRARY_STATIC__} PUBLIC ${__LIBRARY_HEADERS_FOLDERS__} )
 
 set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/lib${__LIBRARY_NAME__}.a" )
 
-set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS__}" )
+set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS_FOLDERS__}" )
 
 target_link_libraries( ${__LIBRARY_STATIC__} ${__LIBRARY_LINK_LIBS__} )
 
 add_library( ${__LIBRARY_SHARED__} SHARED ${__LIBRARY_SOURCES__} )
 
-SET_TARGET_PROPERTIES( ${__LIBRARY_SHARED__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
+set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
 set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/ )
+#set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES PUBLIC_HEADER ${__LIBRARY_HEADERS_FILES__} );
 
 target_compile_options( ${__LIBRARY_SHARED__} PRIVATE
                         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
@@ -79,13 +88,43 @@ target_compile_options( ${__LIBRARY_SHARED__} PRIVATE
                         $<$<CXX_COMPILER_ID:MSVC>:
                         /W4 /pedantic>)
 
-target_include_directories( ${__LIBRARY_SHARED__} PUBLIC ${__LIBRARY_HEADERS__} )
+target_include_directories( ${__LIBRARY_SHARED__} PUBLIC ${__LIBRARY_HEADERS_FOLDERS__} )
 
 set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/lib${__LIBRARY_NAME__}.so" )
 
-set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS__}" )
+set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS_FOLDERS__}" )
 
 target_link_libraries( ${__LIBRARY_SHARED__} ${__LIBRARY_LINK_LIBS__} )
+
+#message( STATUS "CMAKE_INSTALL_LIBDIR => ${CMAKE_INSTALL_LIBDIR}" )
+
+install(
+  TARGETS ${__LIBRARY_STATIC__}
+  LIBRARY DESTINATION ${__LIBRARY_INSTALL_LIB_PATH__}
+  ARCHIVE DESTINATION ${__LIBRARY_INSTALL_LIB_PATH__}
+  RUNTIME DESTINATION ${__LIBRARY_INSTALL_LIB_PATH__}
+  #DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/
+  #          DESTINATION ${__LIBRARY_INSTALL_INCLUDE_PATH__}
+  #          FILES_MATCHING PATTERN "*.h"
+#  PUBLIC_HEADER DESTINATION ${__LIBRARY_INSTALL_INCLUDE_PATH__}
+)
+
+install(
+  TARGETS ${__LIBRARY_SHARED__}
+  LIBRARY DESTINATION ${__LIBRARY_INSTALL_LIB_PATH__}
+  ARCHIVE DESTINATION ${__LIBRARY_INSTALL_LIB_PATH__}
+  RUNTIME DESTINATION ${__LIBRARY_INSTALL_LIB_PATH__}
+  #DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/cxtools/
+  #          DESTINATION ${__LIBRARY_INSTALL_INCLUDE_PATH__}/cxtools
+  #          FILES_MATCHING PATTERN "*.h"
+  #PUBLIC_HEADER DESTINATION ${__LIBRARY_INSTALL_INCLUDE_PATH__}
+)
+
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../include/" # source directory
+        DESTINATION ${__LIBRARY_INSTALL_INCLUDE_PATH__} # target directory
+        FILES_MATCHING # install only matched files
+        PATTERN "*.h" # select header files
+)
 
 add_subdirectory(bin)
 add_subdirectory(http)

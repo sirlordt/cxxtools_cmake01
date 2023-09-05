@@ -26,7 +26,7 @@ test.cpp
 #message( STATUS "CMAKE_CURRENT_SOURCE_DIR => ${CMAKE_CURRENT_SOURCE_DIR}" )
 #message( STATUS "CMAKE_SOURCE_DIR => ${CMAKE_SOURCE_DIR}" )
 
-set( __LIBRARY_HEADERS__ ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+set( __LIBRARY_HEADERS_FOLDERS__ ${CMAKE_CURRENT_SOURCE_DIR}/../../include
                          ${CMAKE_CURRENT_SOURCE_DIR}/../
                          ${CMAKE_CURRENT_SOURCE_DIR}/.
    )
@@ -47,17 +47,17 @@ target_compile_options( ${__LIBRARY_STATIC__} PRIVATE
                         $<$<CXX_COMPILER_ID:MSVC>:
                         /W4 /pedantic>)
 
-target_include_directories( ${__LIBRARY_STATIC__} PUBLIC ${__LIBRARY_HEADERS__} )
+target_include_directories( ${__LIBRARY_STATIC__} PUBLIC ${__LIBRARY_HEADERS_FOLDERS__} )
 
 set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/lib${__LIBRARY_NAME__}.a" )
 
-set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS__}" )
+set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS_FOLDERS__}" )
 
 target_link_libraries( ${__LIBRARY_STATIC__} ${__LIBRARY_LINK_LIBS__} )
 
 add_library( ${__LIBRARY_SHARED__} SHARED ${__LIBRARY_SOURCES__} )
 
-SET_TARGET_PROPERTIES( ${__LIBRARY_SHARED__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
+set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
 set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/ )
 
 target_compile_options( ${__LIBRARY_SHARED__} PRIVATE
@@ -66,10 +66,10 @@ target_compile_options( ${__LIBRARY_SHARED__} PRIVATE
                         $<$<CXX_COMPILER_ID:MSVC>:
                         /W4 /pedantic>)
 
-target_include_directories( ${__LIBRARY_SHARED__} PUBLIC ${__LIBRARY_HEADERS__} )
+target_include_directories( ${__LIBRARY_SHARED__} PUBLIC ${__LIBRARY_HEADERS_FOLDERS__} )
 
 set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/lib${__LIBRARY_NAME__}.so" )
 
-set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS__}" )
+set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${__LIBRARY_HEADERS_FOLDERS__}" )
 
 target_link_libraries( ${__LIBRARY_SHARED__} ${__LIBRARY_LINK_LIBS__} )
