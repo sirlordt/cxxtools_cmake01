@@ -1,6 +1,6 @@
-set( __MAIN_LIBRARY_OUTPUT_PATH__ cxxtools/lib )
-set( __MAIN_LIBRARY_INSTALL_LIB_PATH__ cxxtools/lib )
-set( __MAIN_LIBRARY_INSTALL_INCLUDE_PATH__ cxxtools/include )
+set( __MAIN_LIBRARY_OUTPUT_PATH__ lib )
+set( __MAIN_LIBRARY_INSTALL_LIB_PATH__ lib )
+set( __MAIN_LIBRARY_INSTALL_INCLUDE_PATH__ include )
 set( __MAIN_LIBRARY_NAME__ cxxtools )
 
 set( __LIBRARY_NAME__ cxxtools )
@@ -58,7 +58,7 @@ set( __LIBRARY_HEADERS_FOLDERS__ ${CMAKE_CURRENT_SOURCE_DIR}/../include
 add_library( ${__LIBRARY_STATIC__} STATIC ${__LIBRARY_SOURCES__} )
 
 set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
-set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/ )
+set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__MAIN_LIBRARY_OUTPUT_PATH__}/ )
 #set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES PUBLIC_HEADER "${__LIBRARY_HEADERS_FILES__}" )
 
 #target_compile_definitions( cxxtools PRIVATE BUILT_SHARED=ON )
@@ -80,7 +80,7 @@ target_link_libraries( ${__LIBRARY_STATIC__} ${__LIBRARY_LINK_LIBS__} )
 add_library( ${__LIBRARY_SHARED__} SHARED ${__LIBRARY_SOURCES__} )
 
 set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
-set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__LIBRARY_OUTPUT_PATH__}/ )
+set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__MAIN_LIBRARY_OUTPUT_PATH__}/ )
 #set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES PUBLIC_HEADER ${__LIBRARY_HEADERS_FILES__} );
 
 target_compile_options( ${__LIBRARY_SHARED__} PRIVATE
@@ -117,6 +117,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../include/" # source directory
         DESTINATION ${__MAIN_LIBRARY_INSTALL_INCLUDE_PATH__} # target directory
         FILES_MATCHING # install only matched files
         PATTERN "*.h" # select header files
+        PATTERN "*.tpp" # additional header files
 )
 
 add_subdirectory(bin)
