@@ -1,0 +1,128 @@
+type/category:
+    h00-3f: types
+    h40-7f: plain types (no name field, name is empty)
+    h80-9f: container
+    ha0-bf: other categories
+    hc0-cf: rpc
+    basic typecodes: 0=empty
+                     1=bool
+                     2=char
+                     3=string
+                     4=int (big endian)
+                     6=short binary  (followed by zero terminated, 2 byte length field + data)
+                     7=long binary  (followed by zero terminated, 4 byte length field + data)
+                     8=binary with 2 byte big endian length field
+                     9=binary with 4 byte big endian length field
+                     h10=int8
+                     h11=int16
+                     h12=int32
+                     h13=int64
+                     h18=uint8
+                     h19=uint16
+                     h1a=uint32
+                     h1b=uint64
+                     h20=bcdfloat
+                     h21=short float (1 bit sign, 7 bit exponent, 16 bit mantissa)
+                     h22=medium float (1 bit sign, 7 bit exponent, 32 bit mantissa)
+                     h23=long float (1 bit sign, 15 bit exponent, 64 bit mantissa)
+                     h30=pair,
+                     h31=array
+                     h32=vector
+                     h33=list
+                     h34=deque
+                     h35=set
+                     h36=map
+                     h37=map
+                     h38=multimap
+                     h3e=bcd (+ zero terminated string)
+                     h3f=other (+ zero terminated string)
+    plain typecodes: basic typecode + h40
+    container:       h80=pair
+                     h81=array
+                     h82=vector
+                     h83=list
+                     h84=deque
+                     h85=set
+                     h86=multiset
+                     h87=map
+                     h88=multimap
+    categories:      ha0=object
+                     ha1=array
+                     ha2=reference
+    rpc:             hc0=rpc request
+                     hc1=rpc response ok
+                     hc2=rpc response exception
+
+name:
+    zero terminated string
+value: (only when category=value)
+    zero terminated utf-8 string
+member: (only when category=object)
+    \xff=eod
+member:
+    ...
+nodes: (when category=object|array)
+    category=\xff determines end of data
+
+value:
+    \3                       type (3=string)
+    foobar\0                 name
+    Hello world\0            value
+    \xff                     eod
+
+object:
+    \xa0                            category object
+    myobject\0                      name
+    \xffmytype\0                    type
+    \4 firstMember\0 4711\0 \xff    member1 value
+    \4 secondMember\0 4712\0 \xff   member2 value
+    \xff                            eod
+
+array:
+    \xa1                     category array
+    myarray\0                name
+    \x40                     type
+    \x43 Hello \0 \xff       element1  (type: plain string)
+    \x43 World \0 \xff       element2
+    \xff                     eod
+
+bcd double:
+    \xf0   nan
+    \xf1   inf
+    \xf2   -inf
+    half bytes:  0-9: digits
+                 a: +
+                 b: -
+                 c: .
+                 d: :
+                 e: space
+    \xff                     eod
+
+rpc request:
+    \xc0                     category
+    function\0               function name
+    ...                      array of parameters
+    \xff                     eod
+
+rpc request:
+    \xc3                     category
+    domain\0                 domain
+    function\0               function name
+    ...                      array of parameters
+    \xff                     eod
+
+rpc response ok:
+    \xc1                     category
+    ...                      return value
+    \xff
+
+rpc response exception:
+    \xc2                     category
+    4 byte error code (big endian)
+    error message\0          error message
+    \xff                     eod
+
+Dictionary
+==========
+Each unique name or type name gets a entry in a dictionary. When the same string
+is found it may be serialized by a \1 prefix and a 16 bit index into the dictionary.

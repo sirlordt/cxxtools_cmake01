@@ -39,6 +39,10 @@ set( __LIBRARY_HEADERS_FOLDERS__ ${CMAKE_CURRENT_SOURCE_DIR}/../../include
 
 add_library( ${__LIBRARY_STATIC__} STATIC ${__LIBRARY_SOURCES__} )
 
+#message( STATUS "__MAIN_LIBRARY_STATIC__ => ${__MAIN_LIBRARY_STATIC__}" )
+
+add_dependencies( ${__LIBRARY_STATIC__} ${__MAIN_LIBRARY_STATIC__} )
+
 set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
 set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__MAIN_LIBRARY_OUTPUT_PATH__}/ )
 
@@ -59,6 +63,8 @@ set_target_properties( ${__LIBRARY_STATIC__} PROPERTIES INTERFACE_INCLUDE_DIRECT
 target_link_libraries( ${__LIBRARY_STATIC__} ${__LIBRARY_LINK_LIBS__} )
 
 add_library( ${__LIBRARY_SHARED__} SHARED ${__LIBRARY_SOURCES__} )
+
+add_dependencies( ${__LIBRARY_SHARED__} ${__MAIN_LIBRARY_SHARED__} )
 
 set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES OUTPUT_NAME ${__LIBRARY_NAME__} )
 set_target_properties( ${__LIBRARY_SHARED__} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${__MAIN_LIBRARY_OUTPUT_PATH__}/ )
